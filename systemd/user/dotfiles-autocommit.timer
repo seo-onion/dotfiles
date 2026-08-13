@@ -1,0 +1,9 @@
+[Unit]
+Description=Dispara el auto-commit de dotfiles una vez al dia
+
+[Timer]
+OnCalendar=21:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

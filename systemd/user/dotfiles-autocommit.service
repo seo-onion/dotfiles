@@ -1,0 +1,6 @@
+[Unit]
+Description=Commit y push diario del repo dotfiles (~/.config)
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/dotfiles-autocommit

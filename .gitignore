@@ -33,3 +33,6 @@ hypr/dms/
 
 *.bak
 __pycache__/
+
+# Unidades systemd de usuario (incluye el propio auto-commit)
+!/systemd/
