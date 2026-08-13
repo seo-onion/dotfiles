@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ Escritorio Tron — Hyprland + 7 paneles GTK propios
+# The Grid Theme
 
 **Fedora · Hyprland 0.56 (config en Lua) · Waybar · GTK3 layer-shell · khal**
 
