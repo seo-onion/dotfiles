@@ -1,0 +1,142 @@
+/* Tema Tron para SwayNC 0.12 — ver ~/.config/hypr/theme.md
+ * swaync carga /etc/xdg/swaync/style.css primero y este despues.
+ * Los selectores por defecto son largisimos y ganan por especificidad,
+ * asi que el tema se aplica redefiniendo sus variables, no peleando con ellos. */
+
+:root {
+    /* Fondos: Negro Terminal / Azul Abismo */
+    --cc-bg:           rgba(5, 5, 10, 0.85);
+    --noti-bg:         5, 5, 10;
+    --noti-bg-alpha:   0.85;
+    --noti-bg-darker:  rgb(11, 19, 43);
+    --noti-bg-hover:   rgb(11, 19, 43);
+    --noti-bg-focus:   transparent;
+
+    /* Bordes: Cian Neon apagado, se enciende en hover */
+    --noti-border-color: transparent;
+    --border-radius:     4px;
+
+    /* Texto: Plata Glitch */
+    --text-color:          #E2E8F0;
+    --text-color-disabled: rgb(120, 130, 150);
+
+    /* Acentos */
+    --bg-selected:        #0066FF;
+    --noti-close-bg:      rgba(11, 19, 43, 0.8);
+    --noti-close-bg-hover:#00F0FF;
+
+    /* Geometria: el avatar de 64px era lo que inflaba la tarjeta */
+    --notification-icon-size: 48px;
+
+    --font-size-summary: 14px;
+    --font-size-body:    14px;
+
+    --notification-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4),
+                           0 2px 10px rgba(0, 240, 255, 0.15);
+}
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+}
+
+/* Marco estandar del sistema: 2px degradado 45deg cian->menta, radio 4.
+ * swaync es una capa, y a las capas Hyprland no les pinta borde ni sombra,
+ * asi que aqui se repinta a mano con los dos fondos superpuestos. */
+.control-center,
+.floating-notifications.background .notification-row .notification-background .notification {
+    background-color: transparent;
+    background-image:
+        linear-gradient(rgba(5, 5, 10, 0.96), rgba(5, 5, 10, 0.96)),
+        linear-gradient(45deg, #33CCFF, #00FF99);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.45);
+}
+
+/* El margen va aqui y no en control-center-margin-* del config: si el panel
+ * ocupa toda la superficie, GTK recorta el resplandor y no se ve nada. */
+.control-center {
+    margin: 16px;
+}
+
+/* El toast entra donde luego se queda en la lista: 16px del borde derecho */
+.floating-notifications.background .notification-row .notification-background {
+    padding: 16px 16px 0 16px;
+}
+
+/* Titulo en Blanco Usuario, cuerpo en Plata Glitch */
+.notification-row .notification-background .notification .notification-default-action
+.notification-content .text-box .summary {
+    color: #FFFFFF;
+}
+
+/* Hover: el resplandor neon de la barra, aplicado a la tarjeta */
+.notification-row .notification-background:hover .notification {
+    border-color: #00F0FF;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+}
+
+/* En la lista, sin caja: el marco lo pone el panel. El fondo va en
+ * .notification-default-action, que es el widget que recibe el hover. */
+.control-center .control-center-list .notification-row .notification-background .notification,
+.control-center .control-center-list .notification-row .notification-background .notification .notification-default-action {
+    background: transparent;
+    box-shadow: none;
+}
+
+.control-center .control-center-list .notification-row .notification-background .notification .notification-default-action:hover {
+    background: #0B132B;
+}
+
+/* Sin barras de scroll: el panel es alto, la rueda sigue funcionando */
+.control-center scrollbar,
+.control-center scrollbar slider,
+.control-center undershoot,
+.control-center overshoot {
+    background: transparent;
+    border: none;
+    min-width: 0;
+    min-height: 0;
+    opacity: 0;
+}
+
+/* Sin boton de cerrar: la notificacion se quita haciendo clic en ella.
+ * GTK3 no entiende display:none, hay que encogerlo a cero. */
+.close-button {
+    opacity: 0;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+/* Lista vacia: solo el texto, sin icono */
+.control-center .control-center-list-placeholder image {
+    opacity: 0;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* Notificacion critica: Azul Electrico */
+.notification-row .notification-background .notification.critical {
+    border-color: #0066FF;
+    background: rgba(0, 102, 255, 0.12);
+}
+
+/* Barras de progreso (volumen / brillo) */
+scale trough {
+    background: rgba(11, 19, 43, 0.8);
+    min-height: 8px;
+    border-radius: 4px;
+}
+
+scale highlight {
+    background: #0066FF;
+    border-radius: 4px;
+}

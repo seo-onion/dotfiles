@@ -1,0 +1,81 @@
+{
+  "positionX": "right",
+  "positionY": "top",
+  "layer": "overlay",
+  "control-center-width": 446,
+  "control-center-height": 1164,
+  "timeout": 5,
+  "timeout-low": 2,
+  "timeout-critical": 0,
+  "notification-visibility": {
+    "battery-app-low": {
+      "state": "ignored",
+      "urgency": "Low",
+      "app-name": "(?i)(batter|bater|upower|powerdevil|power-?profiles|power ?manager|acpid?|tlp|charg|energ)"
+    },
+    "battery-app-normal": {
+      "state": "ignored",
+      "urgency": "Normal",
+      "app-name": "(?i)(batter|bater|upower|powerdevil|power-?profiles|power ?manager|acpid?|tlp|charg|energ)"
+    },
+    "battery-app-critical": {
+      "state": "ignored",
+      "urgency": "Critical",
+      "app-name": "(?i)(batter|bater|upower|powerdevil|power-?profiles|power ?manager|acpid?|tlp|charg|energ)"
+    },
+    "battery-category-low": {
+      "state": "ignored",
+      "urgency": "Low",
+      "category": "(?i)(batter|power)"
+    },
+    "battery-category-normal": {
+      "state": "ignored",
+      "urgency": "Normal",
+      "category": "(?i)(batter|power)"
+    },
+    "battery-category-critical": {
+      "state": "ignored",
+      "urgency": "Critical",
+      "category": "(?i)(batter|power)"
+    },
+    "battery-summary-low": {
+      "state": "ignored",
+      "urgency": "Low",
+      "summary": "(?i)(bater[íi]a|batter|batteria|akku|low battery|fully charged|charging|discharging|plugged ?in|unplugged|ac adapter|power adapter|adaptador de corriente|cargador|enchufad|desenchufad|carga (baja|completa|cr[íi]tica|del)|nivel de carga|pila (baja|del)|energ[íi]a (baja|cr[íi]tica))"
+    },
+    "battery-summary-normal": {
+      "state": "ignored",
+      "urgency": "Normal",
+      "summary": "(?i)(bater[íi]a|batter|batteria|akku|low battery|fully charged|charging|discharging|plugged ?in|unplugged|ac adapter|power adapter|adaptador de corriente|cargador|enchufad|desenchufad|carga (baja|completa|cr[íi]tica|del)|nivel de carga|pila (baja|del)|energ[íi]a (baja|cr[íi]tica))"
+    },
+    "battery-summary-critical": {
+      "state": "ignored",
+      "urgency": "Critical",
+      "summary": "(?i)(bater[íi]a|batter|batteria|akku|low battery|fully charged|charging|discharging|plugged ?in|unplugged|ac adapter|power adapter|adaptador de corriente|cargador|enchufad|desenchufad|carga (baja|completa|cr[íi]tica|del)|nivel de carga|pila (baja|del)|energ[íi]a (baja|cr[íi]tica))"
+    },
+    "battery-body-low": {
+      "state": "ignored",
+      "urgency": "Low",
+      "body": "(?i)(bater[íi]a|battery|batteria|akku|fully charged|plugged ?in|unplugged|ac adapter|power adapter|adaptador de corriente|carga (baja|completa|cr[íi]tica)|nivel de carga)"
+    },
+    "battery-body-normal": {
+      "state": "ignored",
+      "urgency": "Normal",
+      "body": "(?i)(bater[íi]a|battery|batteria|akku|fully charged|plugged ?in|unplugged|ac adapter|power adapter|adaptador de corriente|carga (baja|completa|cr[íi]tica)|nivel de carga)"
+    },
+    "battery-body-critical": {
+      "state": "ignored",
+      "urgency": "Critical",
+      "body": "(?i)(bater[íi]a|battery|batteria|akku|fully charged|plugged ?in|unplugged|ac adapter|power adapter|adaptador de corriente|carga (baja|completa|cr[íi]tica)|nivel de carga)"
+    }
+  },
+  "layer-shell-cover-screen": false,
+  "fit-to-screen": false,
+  "control-center-margin-top": 0,
+  "control-center-margin-right": 0,
+  "control-center-margin-bottom": 0,
+  "control-center-margin-left": 0,
+  "notification-window-width": 450,
+  "text-empty": "nothing",
+  "hide-on-action": false
+}

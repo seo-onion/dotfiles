@@ -1,0 +1,233 @@
+{
+    "layer": "top",
+    "position": "top",
+    "margin": "0 0 0 0",
+    "height": 36,
+    "exclusive": true,
+    "modules-left": [
+        "hyprland/workspaces",
+        "custom/add-workspace",
+        "hyprland/window"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "privacy",
+        "wireplumber",
+        "backlight",
+        "temperature",
+        "custom/cpu",
+        "memory",
+        "power-profiles-daemon",
+        "network",
+        "bluetooth",
+        "battery",
+        "tray",
+        "custom/swaync",
+        "custom/clipboard",
+        "custom/display-panel",
+        "custom/power"
+    ],
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "on-click": "activate"
+    },
+    "custom/add-workspace": {
+        "format": "<span color='#00F0FF'></span>",
+        "tooltip": false,
+        "on-click": "hyprctl dispatch exec '[workspace empty] kitty'"
+    },
+    "hyprland/window": {
+        "format": "{title}",
+        "max-length": 38,
+        "separate-outputs": true,
+        "tooltip": false
+    },
+    "clock": {
+        "format": "{:L%H:%M  —  %d %b}",
+        "interval": 60,
+        "locale": "es_ES.utf8",
+        "on-click": "~/.config/hypr/scripts/calendar-panel.py",
+        "tooltip-format": "<tt>{calendar}</tt>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col": 3,
+            "weeks-pos": "left",
+            "on-scroll": 1,
+            "format": {
+                "months": "<span color='#FFFFFF'><b>{}</b></span>",
+                "weekdays": "<span color='#33CCFF'><b>{}</b></span>",
+                "weeks": "<span color='#0066FF'>{}</span>",
+                "days": "<span color='#E2E8F0'>{}</span>",
+                "today": "<span color='#00F0FF'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
+    },
+    "privacy": {
+        "icon-spacing": 6,
+        "icon-size": 14,
+        "transition-duration": 250,
+        "modules": [
+            {
+                "type": "screenshare",
+                "tooltip": true,
+                "tooltip-icon-size": 20
+            },
+            {
+                "type": "audio-in",
+                "tooltip": true,
+                "tooltip-icon-size": 20
+            }
+        ]
+    },
+    "wireplumber": {
+        "format": "<span color='#00F0FF'>{icon}</span>  {volume}%",
+        "format-muted": "<span color='#0066FF'>󰝟</span>  mudo",
+        "format-icons": [
+            "󰕿",
+            "󰖀",
+            "󰕾"
+        ],
+        "max-volume": 100,
+        "on-click": "~/.config/hypr/scripts/audio-panel.py",
+        "on-click-right": "swayosd-client --output-volume mute-toggle",
+        "on-scroll-up": "swayosd-client --output-volume raise",
+        "on-scroll-down": "swayosd-client --output-volume lower",
+        "tooltip-format": "{node_name}"
+    },
+    "backlight": {
+        "device": "amdgpu_bl1",
+        "format": "<span color='#33CCFF'>{icon}</span>  {percent}%",
+        "format-icons": [
+            "󰃞",
+            "󰃟",
+            "󰃠"
+        ],
+        "on-scroll-up": "swayosd-client --brightness raise",
+        "on-scroll-down": "swayosd-client --brightness lower",
+        "tooltip": false
+    },
+    "temperature": {
+        "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:08.1/0000:63:00.0/hwmon",
+        "input-filename": "temp1_input",
+        "interval": 10,
+        "critical-threshold": 85,
+        "format": "<span color='#00FF99'></span>  {temperatureC}°C",
+        "format-critical": "<span color='#ff4444'></span>  {temperatureC}°C",
+        "tooltip-format": "Chip grafico (mismo dado que la CPU)"
+    },
+    "custom/cpu": {
+        "interval": 5,
+        "return-type": "json",
+        "exec": "~/.config/hypr/scripts/cpu-top.sh",
+        "format": "<span color='#0066FF'>󰻠</span>  {}"
+    },
+    "memory": {
+        "interval": 5,
+        "format": "<span color='#0066FF'>󰍛</span>  {percentage}%",
+        "tooltip-format": "{used:0.1f}G de {total:0.1f}G   ·   swap {swapUsed:0.1f}G"
+    },
+    "power-profiles-daemon": {
+        "format": "<span color='#00FF99'>{icon}</span>",
+        "tooltip-format": "Perfil de energia: {profile}",
+        "format-icons": {
+            "default": "󰉁",
+            "performance": "󰓅",
+            "balanced": "󰉁",
+            "power-saver": "󰌵"
+        }
+    },
+    "network": {
+        "interval": 5,
+        "format-wifi": "<span color='#00F0FF'>{icon}</span>  {bandwidthDownBytes} {bandwidthUpBytes}",
+        "format-ethernet": "<span color='#00F0FF'>󰈀</span>  {bandwidthDownBytes} {bandwidthUpBytes}",
+        "format-disconnected": "<span color='#ff4444'>󰤫</span>  Sin conexión",
+        "format-disabled": "<span color='#595959'>󰖪</span>  Wi-Fi apagado",
+        "format-linked": "<span color='#E2B84A'>󰤫</span>  Sin IP",
+        "format": "<span color='#ff4444'>󰤫</span>  Sin red",
+        "format-icons": [
+            "󰤯",
+            "󰤟",
+            "󰤢",
+            "󰤥",
+            "󰤨"
+        ],
+        "tooltip-format": "{essid}  ·  {ipaddr}  ·  {signalStrength}%",
+        "on-click": "~/.config/hypr/scripts/wifi-panel.py"
+    },
+    "bluetooth": {
+        "format": "<span color='#33CCFF'></span>",
+        "format-disabled": "<span color='#595959'>󰂲</span>",
+        "on-click": "~/.config/hypr/scripts/bluetooth-panel.py"
+    },
+    "battery": {
+        "interval": 30,
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon}  {capacity}%",
+        "format-charging": "<span color='#00FF99'>{icon}</span>  {capacity}%",
+        "format-plugged": "<span color='#00FF99'>{icon}</span>  {capacity}%",
+        "format-icons": {
+            "charging": [
+                "󰢟",
+                "󰢜",
+                "󰂆",
+                "󰂇",
+                "󰂈",
+                "󰢝",
+                "󰂉",
+                "󰢞",
+                "󰂊",
+                "󰂋",
+                "󰂅"
+            ],
+            "default": [
+                "󰂎",
+                "󰁺",
+                "󰁻",
+                "󰁼",
+                "󰁽",
+                "󰁾",
+                "󰁿",
+                "󰂀",
+                "󰂁",
+                "󰂂",
+                "󰁹"
+            ]
+        },
+        "tooltip-format": "{timeTo}   ·   {power} W",
+        "on-click": "~/.config/hypr/scripts/battery-panel.py"
+    },
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    },
+    "custom/swaync": {
+        "format": "<span color='#33CCFF'></span>",
+        "on-click": "swaync-client -t -sw",
+        "tooltip": false
+    },
+    "custom/clipboard": {
+        "format": "<span color='#00F0FF'></span>",
+        "on-click": "~/.config/hypr/scripts/clipboard.sh",
+        "tooltip": false
+    },
+    "custom/display-panel": {
+        "format": "<span color='#33CCFF'></span>",
+        "tooltip": false,
+        "on-click": "~/.config/hypr/scripts/display-panel.py"
+    },
+    "custom/power": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "~/.config/hypr/scripts/power-panel.py"
+    }
+}

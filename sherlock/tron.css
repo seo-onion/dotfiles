@@ -1,0 +1,75 @@
+/* Tron suave — acento cian, sin bloques saturados. Ver ~/.config/hypr/theme.md */
+:root {
+    /* fondos: negro azulado, no negro puro */
+    --background:      hsl(225, 30%, 6%);
+    --background-soft: hsl(225, 25%, 12%);
+
+    /* bordes: cian apagado, no neon */
+    --border:          hsl(184, 45%, 32%);
+    --border-soft:     hsl(184, 30%, 22%);
+
+    /* texto: plata atenuada */
+    --text:            hsl(214, 20%, 76%);
+    --text-active:     hsl(184, 55%, 78%);
+
+    /* seleccion: pizarra, el texto es quien se enciende */
+    --foreground:      hsl(215, 22%, 19%);
+    --foreground-soft: hsl(215, 18%, 28%);
+
+    --tag-background:  hsl(215, 24%, 22%);
+
+    /* acentos */
+    --error:           hsl(0, 55%, 58%);
+    --success:         hsl(156, 40%, 52%);
+    --warning:         hsl(41, 55%, 58%);
+}
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-weight: bold;
+}
+
+#search-bar {
+    font-size: 14px;
+}
+
+/* El CSS base pinta una linea bajo el buscador. Fuera. */
+#search-bar-holder {
+    border-bottom: none;
+}
+
+.tile #title {
+    font-size: 14px;
+}
+
+/* Mismo borde que las ventanas: 2px, gradiente 45deg #33CCFF -> #00FF99.
+ *
+ * NO usar border-image: ignora border-radius y deja las esquinas cuadradas.
+ * En su lugar se pintan dos fondos superpuestos: el degradado ocupa toda la
+ * caja incluido el borde, y encima va el fondo oscuro recortado por dentro
+ * del borde. Lo que asoma por los 2px del borde ES el degradado. */
+window:not(#backdrop) {
+    border: 2px solid transparent;
+    border-radius: 4px;
+    background-image:
+        linear-gradient(var(--background), var(--background)),
+        linear-gradient(45deg, rgba(51, 204, 255, 0.93), rgba(0, 255, 153, 0.93));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+/* Barra lateral cian en la fila activa, como tu wofi */
+row:selected .tile {
+    border-left: 2px solid hsl(184, 70%, 45%);
+}
+
+/* Iconos sin el filtro de brillo: la fila ya no es un bloque claro */
+row:selected .tile image.reactive,
+row:selected .tile #icon {
+    -gtk-icon-filter: none;
+}
+
+/* Pie de ventana discreto */
+.status-bar {
+    color: hsl(214, 15%, 45%);
+}

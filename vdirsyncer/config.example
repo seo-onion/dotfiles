@@ -1,0 +1,34 @@
+# vdirsyncer — sincronizacion bidireccional con Google Calendar.
+#
+# PENDIENTE DE CREDENCIALES (el panel funciona sin esto, con el calendario local):
+# 1. https://console.cloud.google.com/ -> proyecto nuevo (o cualquiera)
+# 2. APIs y servicios -> Biblioteca -> habilitar "CalDAV API" y "Google Calendar API"
+# 3. Pantalla de consentimiento OAuth -> tipo Externo -> añadirte como test user
+# 4. Credenciales -> Crear credencial -> ID de cliente OAuth -> "App de escritorio"
+# 5. Pegar abajo client_id y client_secret, y correr:
+#      vdirsyncer discover google_calendar   (abre el navegador, aceptar)
+#      vdirsyncer sync
+#
+# Sin los pasos 1-5, 'vdirsyncer sync' fallara y el boton de sincronizar del
+# panel lo dira; todo lo demas sigue funcionando.
+
+[general]
+status_path = "~/.local/state/vdirsyncer/status/"
+
+[pair google_calendar]
+a = "google"
+b = "local_google"
+collections = ["from a"]
+conflict_resolution = "a wins"
+metadata = ["displayname", "color"]
+
+[storage google]
+type = "google_calendar"
+token_file = "~/.local/state/vdirsyncer/google_token"
+client_id = "PEGAR_CLIENT_ID_AQUI"
+client_secret = "PEGAR_CLIENT_SECRET_AQUI"
+
+[storage local_google]
+type = "filesystem"
+path = "~/.calendars/google/"
+fileext = ".ics"

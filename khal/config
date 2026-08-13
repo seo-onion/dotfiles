@@ -1,0 +1,27 @@
+# khal — motor del panel de calendario (calendar-panel.py)
+# 'personal' es local y funciona sin sincronizar nada. Los de Google aparecen
+# solos cuando vdirsyncer haga el primer discover/sync (ver config de vdirsyncer).
+
+[calendars]
+
+[[personal]]
+path = ~/.calendars/personal
+type = calendar
+color = light cyan
+
+[[google]]
+path = ~/.calendars/google/*
+type = discover
+
+[locale]
+timeformat = %H:%M
+dateformat = %d/%m
+longdateformat = %d/%m/%Y
+datetimeformat = %d/%m %H:%M
+longdatetimeformat = %d/%m/%Y %H:%M
+firstweekday = 0
+weeknumbers = off
+
+[default]
+default_calendar = personal
+highlight_event_days = True

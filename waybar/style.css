@@ -1,0 +1,181 @@
+* {
+    border: none;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 14px;
+    font-weight: bold;
+    min-height: 0;
+}
+
+/* ── Ventana ──────────────────────────────────────────────────────────────── */
+window#waybar {
+    background-color: rgba(5, 5, 10, 0.85);
+    color: #E2E8F0;
+    transition: margin-top 0.25s ease, opacity 0.25s ease;
+}
+
+@keyframes slideDown {
+    from { margin-top: -36px; opacity: 0; }
+    to   { margin-top: 0;     opacity: 1; }
+}
+
+window#waybar.slide-in {
+    animation: slideDown 0.25s ease forwards;
+}
+
+/* ── Grupos de módulos (solo layout, sin hover de grupo — GTK3 no propaga) ── */
+.modules-left,
+.modules-center,
+.modules-right {
+    padding: 0 4px;
+}
+
+/* ── Workspaces ───────────────────────────────────────────────────────────── */
+#workspaces button {
+    color: #E2E8F0;
+    padding: 0 8px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+#workspaces button.active {
+    color: #FFFFFF;
+    border-bottom: 2px solid #00F0FF;
+}
+
+#workspaces button:hover {
+    color: #00F0FF;
+    border-bottom: 2px solid #00F0FF;
+    background: transparent;
+}
+
+/* ── Módulos individuales ─────────────────────────────────────────────────── */
+#custom-add-workspace,
+#clock,
+#battery,
+#custom-swaync,
+#network,
+#bluetooth,
+#custom-clipboard,
+#custom-display-panel,
+#window,
+#privacy,
+#wireplumber,
+#backlight,
+#temperature,
+#custom-cpu,
+#memory,
+#power-profiles-daemon,
+#tray {
+    padding: 0 10px;
+    color: #E2E8F0;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+#battery.charging,
+#battery.plugged,
+#battery.warning {
+    background: transparent;
+}
+
+/* Bajo el 15% Y sin cargar: rojo pulsante.
+   El :not() es lo que impide que se ponga rojo mientras esta enchufada. */
+#battery.critical:not(.charging):not(.plugged) {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.12);
+    border-bottom: 2px solid #ff4444;
+    animation: pulso_bateria 2s ease-in-out infinite;
+}
+
+@keyframes pulso_bateria {
+    0%   { color: #ff4444; }
+    50%  { color: #FFFFFF; }
+    100% { color: #ff4444; }
+}
+
+/* Hover: color cian + línea inferior recta, sin brillo */
+#custom-add-workspace:hover,
+#clock:hover,
+#battery:hover,
+#custom-swaync:hover,
+#network:hover,
+#bluetooth:hover,
+#custom-clipboard:hover,
+#custom-display-panel:hover,
+#wireplumber:hover,
+#backlight:hover,
+#temperature:hover,
+#custom-cpu:hover,
+#memory:hover,
+#power-profiles-daemon:hover {
+    color: #00F0FF;
+    border-bottom: 2px solid #00F0FF;
+    background: transparent;
+}
+
+/* ── Ventana activa: secundaria, no compite con los workspaces ───────────── */
+#window {
+    color: rgba(226, 232, 240, 0.55);
+    font-weight: normal;
+}
+
+/* ── Privacidad: solo aparece cuando algo escucha o graba ────────────────── */
+#privacy {
+    color: #FFFFFF;
+    padding: 0 6px;
+}
+
+#privacy-item.screenshare {
+    color: #0066FF;
+}
+
+#privacy-item.audio-in {
+    color: #00FF99;
+}
+
+/* ── Temperatura crítica: rojo pulsante, mismo lenguaje que la batería ───── */
+#temperature.critical {
+    color: #FFFFFF;
+    background: rgba(255, 68, 68, 0.20);
+    border-bottom: 2px solid #ff4444;
+}
+
+/* ── Tooltips (el calendario del reloj vive aquí) ────────────────────────── */
+/* Mismo borde que las ventanas: 2px, degradado 45deg #33CCFF -> #00FF99.
+   Dos fondos superpuestos porque border-image ignoraria el border-radius. */
+tooltip {
+    background-color: transparent;
+    background-image:
+        linear-gradient(rgba(5, 5, 10, 0.96), rgba(5, 5, 10, 0.96)),
+        linear-gradient(45deg, #33CCFF, #00FF99);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    margin: 0;
+}
+
+tooltip label {
+    color: #E2E8F0;
+    padding: 8px 10px;
+}
+
+#tray menu {
+    background: rgba(5, 5, 10, 0.95);
+    color: #E2E8F0;
+    border: 1px solid rgba(0, 240, 255, 0.15);
+}
+
+#custom-power {
+    padding: 0 12px;
+    color: #E2E8F0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+#custom-power:hover {
+    color: #ff4444;
+    border-bottom: 2px solid #ff4444;
+    background: rgba(255, 68, 68, 0.10);
+}

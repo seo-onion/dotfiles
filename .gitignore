@@ -1,0 +1,35 @@
+# Lista blanca: solo entra lo declarado. Todo lo demas de ~/.config queda fuera.
+/*
+!/.gitignore
+!/README.md
+
+# Escritorio Hyprland completo (config Lua, paneles, scripts, docs)
+!/hypr/
+hypr/*.bak
+hypr/*.pre056
+hypr/hyprland.conf
+hypr/scripts-retirados.tar.gz
+hypr/.nighttemp
+hypr/dms/
+
+# Barra, lanzador y notificaciones
+!/waybar/
+!/sherlock/
+!/swaync/
+
+# Terminal (fuente y colores que usa todo el tema)
+!/kitty/
+
+# CopyQ: SOLO el tema — los .dat son contenido del portapapeles
+!/copyq/
+/copyq/*
+!/copyq/themes/
+
+# Calendario: khal si, vdirsyncer NUNCA con credenciales (va el .example)
+!/khal/
+!/vdirsyncer/
+/vdirsyncer/*
+!/vdirsyncer/config.example
+
+*.bak
+__pycache__/
