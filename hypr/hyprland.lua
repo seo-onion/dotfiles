@@ -221,8 +221,9 @@ hl.bind("XF86PowerOff", hl.dsp.exec_cmd("~/.config/hypr/scripts/power-panel.py")
 
 -- Tapa: solo se apaga el panel (dpms). Nada de deshabilitar el monitor: eso
 -- movia los workspaces a una salida fantasma y devolvia las ventanas desordenadas.
-hl.bind("switch:on:Lid Switch",  hl.dsp.dpms("off eDP-1"), { locked = true })
-hl.bind("switch:off:Lid Switch", hl.dsp.dpms("on eDP-1"),  { locked = true })
+-- Tapa: sin binds a proposito — cerrar la tapa no hace NADA (ni apagar
+-- pantalla ni suspender; logind ya la ignora en 99-lid-ignore.conf). El
+-- equipo sigue trabajando igual con la tapa cerrada.
 
 -- Copilot (XF86Assistant) — el hardware envía SUPER+SHIFT junto con la tecla
 -- Úsala como modificador: mantén Copilot + letra para lanzar apps

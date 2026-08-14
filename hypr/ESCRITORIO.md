@@ -58,8 +58,9 @@ Dos capas distintas, las dos ya resueltas:
 
 - **Suspensión:** la ignora logind, en `/etc/systemd/logind.conf.d/99-lid-ignore.conf`
   (`HandleLidSwitch=ignore` y sus dos variantes). No hay hypridle ni swayidle.
-- **Pantalla:** el bind de la tapa solo apaga el panel con `dpms`, y lo enciende
-  al abrir.
+- **Pantalla:** desde el 2026-08-13 la tapa NO tiene binds: cerrarla no hace
+  nada (ni dpms ni suspender) y el equipo sigue trabajando normal. Antes
+  apagaba el panel con `dpms`.
 
 Antes ese bind hacía `disabled = true` sobre eDP-1. Con un único monitor eso
 manda los workspaces a una salida fantasma y las ventanas vuelven descolocadas.
