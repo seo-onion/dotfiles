@@ -218,6 +218,14 @@ Al editar a mano hay que usar el escapado de QSettings (`\n` dentro de comillas)
 `disable_tray=true`. CopyQ ponía unas tijeras en la bandeja que duplicaban el
 icono de portapapeles de la barra, y la bandeja no hacía falta para nada.
 
+**Trampa: sin bandeja, CopyQ abre la ventana al arrancar el servidor.** Es su
+salvavidas — se asume que sin icono no tendrías cómo llegar a él. La ventana
+aparecía sola en cada arranque de sesión y ya no se cerraba nunca, porque quien
+la cierra es `clipboard.sh` y ese solo corre cuando haces clic en la waybar.
+Se apaga con `hide_main_window=true`; la bandeja sigue desactivada y el clic
+del módulo sigue abriéndola igual. Comprobado aislando la variable: con
+`disable_tray=false` la ventana no aparecía, con `true` sí.
+
 Para comprobar que no queda ningún icono registrado:
 
 ```
@@ -427,3 +435,9 @@ workspace. Sin nada maximizado, Tab cicla a pelo con el mosaico de siempre.
 Opt-in real: el modo lo eliges tú maximizando primero. Iconos de señal = mismos glifos nf-md que la waybar; hover de
 filas = `#0b132b`, el de CopyQ. Ojo: los glifos PUA se corrompen al pegarlos
 en el archivo — insertarlos siempre por escape `\U000fXXXX` en Python.
+
+2026-08-15: `hide_main_window=true` en `copyq.conf`. El portapapeles se abría
+solo en cada arranque de sesión y se quedaba clavado; era efecto colateral de
+`disable_tray=true` (ver «Sin icono en la bandeja»). No parecía el arranque
+porque la tapa no dispara nada — el journal lo delató: sistema arriba a las
+16:48, ventana abierta a las 16:48.

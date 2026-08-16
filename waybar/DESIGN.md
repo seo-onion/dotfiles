@@ -99,6 +99,10 @@ Ahora mismo está **vacía a propósito**: el único inquilino era CopyQ y se le
 quitó (`disable_tray=true`) porque duplicaba el icono de portapapeles. El módulo
 se queda para la próxima app que lo necesite.
 
+Quitarle la bandeja a CopyQ tuvo un coletazo: abría su ventana sola en cada
+arranque. Se compensa con `hide_main_window=true` — el porqué está en
+`~/.config/hypr/ESCRITORIO.md`.
+
 ### El portapapeles no llama a `copyq` directamente
 
 `custom/clipboard` ejecuta `~/.config/hypr/scripts/clipboard.sh`, no
