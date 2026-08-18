@@ -51,17 +51,8 @@ exec_inplace = "control-return"
 
 [keybinds]
 # Sherlock NO trae valores por defecto aqui: lo que no este en esta tabla,
-# no hace nada. Ademas, la tecla no capturada se la queda GTK y mueve el foco
-# fuera de la barra de busqueda, dejando muerto el Enter.
+# no hace nada. Sin esta linea, Enter no lanzaba la app.
 "return" = "exec"
-"ctrl-return" = "exec_inplace"
-"down" = "item_down"
-"up" = "item_up"
-"ctrl-j" = "item_down"
-"ctrl-k" = "item_up"
-"ctrl-h" = "item_left"
-"ctrl-l" = "item_right"
-"ctrl-i" = "toggle_context"
 
 [files]
 config = "/home/seo-onion/.config/sherlock/config.toml"
