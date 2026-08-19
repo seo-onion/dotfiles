@@ -10,6 +10,7 @@ import re
 import signal
 import subprocess
 import threading
+import time
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -89,6 +90,7 @@ scrollbar slider {
     box-shadow: none;
 }
 scrollbar slider:hover { background: rgba(0, 240, 255, 0.5); }
+spinner { color: #00F0FF; }
 undershoot.top, undershoot.bottom, overshoot.top, overshoot.bottom { background: none; border: none; }
 """
 
@@ -96,6 +98,65 @@ undershoot.top, undershoot.bottom, overshoot.top, overshoot.bottom { background:
 def bt(*args, timeout=20):
     return subprocess.run(['bluetoothctl', *args], capture_output=True, text=True,
                           timeout=timeout).stdout
+
+
+def campo(info, nombre):
+    # anclado a la linea: la salida de bluetoothctl mezcla eventos [CHG] de otros
+    # dispositivos que un `in` suelto tomaria por estado propio.
+    m = re.search(rf'^\s*{nombre}:\s*(\S+)', info, re.M)
+    return m.group(1) if m else ''
+
+
+def hay_audio(mac):
+    try:
+        salida = subprocess.run(['pactl', 'list', 'sinks', 'short'],
+                                capture_output=True, text=True, timeout=5).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return True
+    return mac.replace(':', '_') in salida
+
+
+def conectado(mac):
+    # bluez marca Connected al enganchar el enlace, ~1s antes de que exista el
+    # perfil de audio: en unos audifonos ese hueco todavia no es "conectado".
+    info = bt('info', mac, timeout=5)
+    if campo(info, 'Connected') != 'yes':
+        return False
+    return not campo(info, 'Icon').startswith('audio') or hay_audio(mac)
+
+
+def desconectado(mac):
+    return campo(bt('info', mac, timeout=5), 'Connected') != 'yes'
+
+
+def emparejado(mac):
+    return campo(bt('info', mac, timeout=5), 'Paired') == 'yes'
+
+
+def esperar(prueba, segundos, estable=1.6):
+    fin = time.monotonic() + segundos
+    while True:
+        if prueba():
+            time.sleep(estable)
+            if prueba():
+                return True
+        if time.monotonic() >= fin:
+            return False
+        time.sleep(0.4)
+
+
+def intentar(mac, accion, prueba, segundos):
+    # bluetoothctl no termina cuando la accion falla y miente cuando acierta.
+    # Se mata al terminar y recien ahi se pregunta el estado: matarlo puede
+    # tumbar el enlace, asi que su respuesta antes del kill no vale.
+    p = subprocess.Popen(['bluetoothctl', accion, mac],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        esperar(prueba, segundos)
+    finally:
+        p.terminate()
+    time.sleep(0.6)
+    return prueba()
 
 
 def notify(cuerpo, urgencia=None):
@@ -157,6 +218,9 @@ class Panel(Gtk.Window):
         self.caja.pack_start(self.pie, False, False, 0)
 
         self.dispositivos = []
+        self.encendido = False
+        self.ocupado = None
+        self.ocupado_texto = ''
         self._refrescar()
 
     def _margen_izq(self):
@@ -209,9 +273,11 @@ class Panel(Gtk.Window):
                 info = bt('info', mac)
                 bateria = re.search(r'Battery Percentage:.*\((\d+)\)', info)
                 tipo = re.search(r'Icon:\s*(\S+)', info)
+                enlazado = campo(info, 'Connected') == 'yes'
                 dispositivos.append({
                     'mac': mac, 'nombre': nombre,
-                    'conectado': 'Connected: yes' in info,
+                    'conectado': enlazado and (
+                        not campo(info, 'Icon').startswith('audio') or hay_audio(mac)),
                     'emparejado': True,
                     'bateria': int(bateria.group(1)) if bateria else None,
                     'icono': ICONOS_TIPO.get(tipo.group(1) if tipo else '', ICONO_BT),
@@ -235,12 +301,15 @@ class Panel(Gtk.Window):
 
     def _pintar(self, encendido, dispositivos):
         self.dispositivos = dispositivos
+        self.encendido = encendido
         self.interruptor.handler_block(self.id_radio)
         self.interruptor.set_state(encendido)
         self.interruptor.handler_unblock(self.id_radio)
 
         conectados = [d for d in dispositivos if d['conectado']]
-        if not encendido:
+        if self.ocupado_texto:
+            self.estado.set_text(self.ocupado_texto)
+        elif not encendido:
             self.estado.set_text('Bluetooth apagado')
         elif conectados:
             d = conectados[0]
@@ -255,8 +324,17 @@ class Panel(Gtk.Window):
         for d in dispositivos:
             fila = Gtk.ListBoxRow()
             caja = Gtk.Box(spacing=10)
-            marca = '✓' if d['conectado'] else ' '
-            nombre = Gtk.Label(label=f"{marca}  {d['icono']}  {d['nombre']}", xalign=0)
+            if d['mac'] == self.ocupado:
+                marca = Gtk.Spinner()
+                marca.start()
+            else:
+                marca = Gtk.Label(label='✓' if d['conectado'] else ' ')
+                if d['conectado']:
+                    marca.get_style_context().add_class('conectada')
+            marca.set_size_request(16, 16)
+            marca.set_valign(Gtk.Align.CENTER)
+            caja.pack_start(marca, False, False, 0)
+            nombre = Gtk.Label(label=f"{d['icono']}  {d['nombre']}", xalign=0)
             nombre.set_ellipsize(Pango.EllipsizeMode.END)
             if d['conectado']:
                 nombre.get_style_context().add_class('conectada')
@@ -303,59 +381,82 @@ class Panel(Gtk.Window):
         threading.Thread(target=tarea, daemon=True).start()
 
     def _fila_activada(self, _lista, fila):
+        if self.ocupado:
+            return
         d = self.dispositivos[fila.get_index()]
         if d['conectado']:
-            threading.Thread(target=lambda: (
-                bt('disconnect', d['mac']),
-                notify(f"Desconectado de {d['nombre']}"),
-                self._cargar()
-            ), daemon=True).start()
+            self._desconectar(d)
         elif d['emparejado']:
             self._conectar(d)
         else:
             self._emparejar(d)
 
-    def _conectar(self, d):
-        notify(f"Conectando a {d['nombre']}...")
+    def _ocupar(self, d, texto):
+        self.ocupado = d['mac']
+        self.ocupado_texto = texto
+        self._pintar(self.encendido, self.dispositivos)
+        return False
+
+    def _soltar(self):
+        self.ocupado = None
+        self.ocupado_texto = ''
+        return False
+
+    def _fin(self, ok, exito, fallo):
+        GLib.idle_add(self._soltar)
+        notify(exito if ok else fallo, None if ok else 'critical')
+        self._cargar()
+        if ok:
+            GLib.timeout_add(1200, Gtk.main_quit)
+
+    def _desconectar(self, d):
+        self._ocupar(d, f"Desconectando de {d['nombre']}…")
 
         def tarea():
-            out = bt('connect', d['mac'])
-            if re.search('successful', out, re.I):
-                notify(f"Conectado a {d['nombre']} ✓")
-                GLib.idle_add(Gtk.main_quit)
-            else:
-                notify(f"No se pudo conectar a {d['nombre']}", 'critical')
-                self._cargar()
+            bt('disconnect', d['mac'])
+            esperar(lambda: desconectado(d['mac']), 8)
+            GLib.idle_add(self._soltar)
+            notify(f"Desconectado de {d['nombre']}")
+            self._cargar()
+        threading.Thread(target=tarea, daemon=True).start()
+
+    def _conectar(self, d):
+        self._ocupar(d, f"Conectando a {d['nombre']}…")
+
+        def tarea():
+            ok = intentar(d['mac'], 'connect', lambda: conectado(d['mac']), 20)
+            self._fin(ok, f"Conectado a {d['nombre']} ✓",
+                      f"No se pudo conectar a {d['nombre']}")
         threading.Thread(target=tarea, daemon=True).start()
 
     def _emparejar(self, d):
-        notify(f"Emparejando con {d['nombre']}...")
+        self._ocupar(d, f"Emparejando con {d['nombre']}…")
 
         def tarea():
-            try:
-                out = bt('--timeout', '25', 'pair', d['mac'], timeout=30)
-            except subprocess.TimeoutExpired:
-                out = ''
-            if re.search('successful', out, re.I):
-                bt('trust', d['mac'])
-                out = bt('connect', d['mac'])
-                if re.search('successful', out, re.I):
-                    notify(f"Conectado a {d['nombre']} ✓")
-                    GLib.idle_add(Gtk.main_quit)
-                    return
-                notify(f"Emparejado, pero no se pudo conectar a {d['nombre']}", 'critical')
-            else:
-                notify(f"No se pudo emparejar con {d['nombre']}", 'critical')
-            self._cargar()
+            if not intentar(d['mac'], 'pair', lambda: emparejado(d['mac']), 25):
+                self._fin(False, '', f"No se pudo emparejar con {d['nombre']}")
+                return
+            bt('trust', d['mac'])
+            GLib.idle_add(self._ocupar, d, f"Conectando a {d['nombre']}…")
+            ok = (esperar(lambda: conectado(d['mac']), 5)
+                  or intentar(d['mac'], 'connect', lambda: conectado(d['mac']), 20))
+            self._fin(ok, f"Conectado a {d['nombre']} ✓",
+                      f"Emparejado, pero no conecta a {d['nombre']}")
         threading.Thread(target=tarea, daemon=True).start()
 
     def _olvidar(self, _b, d):
-        threading.Thread(target=lambda: (
-            bt('disconnect', d['mac']) if d['conectado'] else None,
-            bt('remove', d['mac']),
-            notify(f"{d['nombre']} eliminado"),
+        if self.ocupado:
+            return
+        self._ocupar(d, f"Olvidando {d['nombre']}…")
+
+        def tarea():
+            if d['conectado']:
+                bt('disconnect', d['mac'])
+            bt('remove', d['mac'])
+            GLib.idle_add(self._soltar)
+            notify(f"{d['nombre']} eliminado")
             self._cargar()
-        ), daemon=True).start()
+        threading.Thread(target=tarea, daemon=True).start()
 
     def _clic_fuera(self, _w, evento):
         # Los clics sobre widgets hijos llegan con coordenadas relativas AL HIJO
