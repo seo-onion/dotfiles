@@ -1,0 +1,11 @@
+[Unit]
+Description=Fija el mic interno a 40% (evita saturar Mic Boost)
+After=wireplumber.service pipewire-pulse.service
+BindsTo=wireplumber.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'for i in $(seq 1 30); do pactl set-source-volume alsa_input.pci-0000_63_00.6.analog-stereo 40%% 2>/dev/null && exit 0; sleep 1; done; exit 1'
+
+[Install]
+WantedBy=wireplumber.service
