@@ -238,6 +238,18 @@ hl.bind(mainMod .. " + period", hl.dsp.exec_cmd(menu .. " --sub-menu emoji"))
 -- Brillo nocturno
 hl.bind("F11", hl.dsp.exec_cmd("~/.config/hypr/scripts/nightlight-toggle.sh"))
 
+-- Bloqueo del touchpad
+local touchpad_activo = true
+hl.bind("F7", function()
+    touchpad_activo = not touchpad_activo
+    hl.device({ name = "asuf1415:00-2808:0224-touchpad", enabled = touchpad_activo })
+    hl.device({ name = "asuf1415:00-2808:0224-mouse",    enabled = touchpad_activo })
+    hl.notification.create({
+        text = touchpad_activo and "Touchpad activo" or "Touchpad bloqueado",
+        timeout = 1500,
+    })
+end)
+
 -- Mouse (Arrastre)
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
