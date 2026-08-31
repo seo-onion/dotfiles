@@ -490,6 +490,52 @@ def toggle():
     return False
 
 
+
+# ── INSTRUMENTACION TEMPORAL — QUITAR ────────────────────────────────────────
+import functools as _ft, traceback as _tb
+_LOG = '/tmp/claude-1000/-home-seo-onion/70ef4e82-ea03-429e-8091-25b9f22359fc/scratchpad/btpanel-debug.log'
+
+
+def _log(msg):
+    with open(_LOG, 'a') as f:
+        f.write(time.strftime('%H:%M:%S ') + str(msg) + '\n')
+
+
+def _corto(r):
+    s = r.strip().replace('\n', ' | ') if isinstance(r, str) else repr(r)
+    return s[:200]
+
+
+def _traza(fn, nombre, metodo=False):
+    @_ft.wraps(fn)
+    def w(*a, **k):
+        args = a[1:] if metodo else a
+        t = time.monotonic()
+        try:
+            r = fn(*a, **k)
+            _log(f'{nombre}{args!r} -> {_corto(r)}  [{time.monotonic()-t:.2f}s]')
+            return r
+        except BaseException as e:
+            _log(f'{nombre}{args!r} !! {type(e).__name__}: {e}  [{time.monotonic()-t:.2f}s]')
+            raise
+    return w
+
+
+threading.excepthook = lambda a: _log(
+    'HILO MUERTO: ' + ''.join(_tb.format_exception(a.exc_type, a.exc_value, a.exc_traceback)))
+
+bt = _traza(bt, 'bt')
+hay_audio = _traza(hay_audio, 'hay_audio')
+conectado = _traza(conectado, 'conectado')
+desconectado = _traza(desconectado, 'desconectado')
+emparejado = _traza(emparejado, 'emparejado')
+intentar = _traza(intentar, 'intentar')
+for _n in ('_fila_activada', '_conectar', '_desconectar', '_emparejar', '_fin',
+           '_cargar', '_pintar', '_radio', '_escanear'):
+    setattr(Panel, _n, _traza(getattr(Panel, _n), _n, metodo=True))
+_log('=== panel arrancado, PATH=' + os.environ.get('PATH', '?')[:80] + ' ===')
+# ── FIN INSTRUMENTACION ──────────────────────────────────────────────────────
+
 if __name__ == '__main__':
     if toggle():
         raise SystemExit

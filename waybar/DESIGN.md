@@ -66,6 +66,23 @@ solo se colorea el glifo y el texto se queda en plata.
 **La batería en estado normal se deja sin color a propósito.** Si se le pusiera
 color aquí, pisaría el rojo de «menos del 15 %» que aplica el CSS por clase.
 
+### El bluetooth tiene cuatro estados, no uno
+
+Antes solo definía `format` y `format-disabled`, y el `format` era un glifo fijo
+sin `{status}`: el icono se veía igual conectado, desconectado o con la radio
+apagada. Nunca decía nada.
+
+| Estado | Formato | Aspecto |
+|---|---|---|
+| Conectado | `format-connected` | glifo en Azul Cielo `#33CCFF` |
+| Encendido, sin nada | `format-on` | glifo sin color, en plata |
+| Radio apagada | `format-off` | glifo tachado en Gris `#595959` |
+| Sin adaptador | `format-disabled` | glifo tachado en Gris `#595959` |
+
+El estado «encendido pero sin conectar» se deja **sin color a propósito**, por la
+misma razón que la batería: el color se reserva para señalar algo, y aquí no hay
+nada que señalar.
+
 ### Paleta
 
 | Color | Módulos |

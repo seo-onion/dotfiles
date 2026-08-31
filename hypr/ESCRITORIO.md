@@ -289,6 +289,54 @@ El historial suele estar lleno de capturas de pantalla (54 de 60 elementos en un
 momento dado). CopyQ las muestra como miniaturas, y varias eran capturas *de la
 propia CopyQ*. Eso parece un fallo de renderizado y no lo es.
 
+## Nemo (gestor de archivos)
+
+El menú «Abrir con» de VS Code / Sublime / Obsidian está resuelto con **dos
+mecanismos distintos**, porque los tres gestos no son el mismo problema.
+
+Clic sobre un **archivo** o una **carpeta**: Nemo ya tiene «Abrir con» nativo. Solo
+faltaba que las apps estuvieran asociadas al tipo MIME. Se añaden en
+`~/.config/mimeapps.list` bajo `[Added Associations]` — **no** copiando el
+`.desktop` a `~/.local/share/applications/`, que lo congelaría y dejaría de
+seguir las actualizaciones del paquete.
+
+Clic en el **fondo vacío**: no existe menú nativo y no hay forma de añadirlo
+salvo con acciones. Van en `~/.local/share/nemo/actions/*.nemo_action`, con
+`Selection=none` — que significa literalmente «clic en el fondo», no «ninguna
+acción» — y `%P`, la ruta de la carpeta actual.
+
+### Las dos trampas
+
+**`actions-tree.json` lleva un objeto en la raíz, no un array.** El archivo que
+agrupa las acciones en el submenú «Abrir con» es
+`~/.config/nemo/actions-tree.json` y su raíz tiene que ser
+`{"toplevel": [ ... ]}`. Con un array suelto, Nemo lo rechaza entero con
+`Structured actions couldn't be set up: … se esperaba un objeto` y las acciones
+aparecen sueltas en la raíz del menú, sin agrupar. El `uuid` de cada acción es
+su **nombre de archivo con extensión**.
+
+**Una asociación añadida se convierte en el predeterminado si no hay uno fijado.**
+Al añadir `text/plain=code.desktop` a `[Added Associations]`, el doble clic en un
+`.txt` pasó de nvim a VS Code sin avisar. Para que solo aparezca en la lista de
+«Abrir con» sin robar el predeterminado, hay que fijar el que ya había en
+`[Default Applications]`.
+
+### Obsidian es el caso raro
+
+No abre carpetas, abre **bóvedas**, y su `.desktop` solo entiende
+`x-scheme-handler/obsidian`. Pasarle una ruta no hace nada. Por eso no va por MIME
+sino con `abrir-obsidian.sh`, que construye `obsidian://open?path=…` con la ruta
+percent-encoded (sin eso se rompe con espacios y acentos). Si la carpeta no es una
+bóveda, Obsidian pregunta si crear una: es su comportamiento normal.
+
+### Depurar
+
+    nemo --quit
+    NEMO_DEBUG=Actions nemo --debug
+
+Nemo solo registra las acciones que **descarta**. Si la tuya no sale en el log,
+la aceptó.
+
 ## Cómo verificar que todo sigue en pie
 
 ```

@@ -162,7 +162,9 @@
         "on-click": "~/.config/hypr/scripts/wifi-panel.py"
     },
     "bluetooth": {
-        "format": "<span color='#33CCFF'></span>",
+        "format-connected": "<span color='#33CCFF'></span>",
+        "format-on": "",
+        "format-off": "<span color='#595959'>󰂲</span>",
         "format-disabled": "<span color='#595959'>󰂲</span>",
         "on-click": "~/.config/hypr/scripts/bluetooth-panel.py"
     },
