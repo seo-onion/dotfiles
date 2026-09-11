@@ -24,6 +24,7 @@ ANCHO = 460
 PANTALLA = 1920
 MARGEN = 16
 ICONO_X_FALLBACK = 1150
+VOL_MAX = 200
 SEP = '\x1e'
 
 I_VOL = ['\U000f057f', '\U000f0580', '\U000f057e']
@@ -259,12 +260,16 @@ class Panel(Gtk.Window):
 
     def _armar_dispositivos(self, nombre):
         self._seccion(nombre)
+        es_salida = nombre == 'Salida'
         fila = Gtk.Box(spacing=8)
         lbl = Gtk.Label(label='')
         lbl.set_width_chars(7)
-        escala = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 1)
+        escala = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0,
+                                          VOL_MAX if es_salida else 100, 1)
         escala.set_draw_value(False)
         escala.set_hexpand(True)
+        if es_salida:
+            escala.add_mark(100, Gtk.PositionType.BOTTOM, None)
         mute = Gtk.Button(label=I_MUTE)
         fila.pack_start(lbl, False, False, 0)
         fila.pack_start(escala, True, True, 0)
@@ -275,7 +280,6 @@ class Panel(Gtk.Window):
         lista.set_selection_mode(Gtk.SelectionMode.NONE)
         self.cont.pack_start(lista, False, False, 0)
 
-        es_salida = nombre == 'Salida'
         objetivo = '@DEFAULT_AUDIO_SINK@' if es_salida else '@DEFAULT_AUDIO_SOURCE@'
         escala.connect('value-changed',
                        lambda e: self._debounce(objetivo, e.get_value()))
@@ -384,9 +388,10 @@ class Panel(Gtk.Window):
             lbl.set_ellipsize(Pango.EllipsizeMode.END)
             lbl.set_width_chars(12)
             lbl.get_style_context().add_class('sutil')
-            escala = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 1)
+            escala = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, VOL_MAX, 1)
             escala.set_draw_value(False)
             escala.set_hexpand(True)
+            escala.add_mark(100, Gtk.PositionType.BOTTOM, None)
             escala.set_value(pct_volumen(app))
             idx = str(app['index'])
             escala.connect('value-changed',
