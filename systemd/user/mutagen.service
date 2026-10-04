@@ -1,0 +1,9 @@
+[Unit]
+Description=Mutagen: sincroniza apps/naovi-backend con seonion-server
+
+[Service]
+ExecStart=/usr/local/bin/mutagen daemon run
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
