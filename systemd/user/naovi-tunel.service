@@ -3,7 +3,7 @@ Description=Túnel SSH al backend de Naovi en seonion-server
 After=network-online.target
 
 [Service]
-ExecStart=/usr/bin/ssh -N -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -L 8000:127.0.0.1:8000 -L 8001:127.0.0.1:8001 -L 9000:127.0.0.1:9002 -L 9001:127.0.0.1:9001 -L 5433:127.0.0.1:5433 server
+ExecStart=/usr/bin/ssh -N -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -L 8000:127.0.0.1:8000 -L 8001:127.0.0.1:8001 -L 8002:127.0.0.1:8002 -L 9000:127.0.0.1:9002 -L 9001:127.0.0.1:9001 -L 5433:127.0.0.1:5433 server
 Restart=always
 RestartSec=5
 
