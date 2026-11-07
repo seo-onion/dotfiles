@@ -1,0 +1,11 @@
+[Unit]
+Description=Túnel SSH al Playwright MCP en seonion-server
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/ssh -N -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -L 8931:127.0.0.1:8931 server
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
